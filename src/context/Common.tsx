@@ -70,7 +70,9 @@ export const CommonContextProvider: FC<PropsWithChildren> = ({children}) => {
             if (!userData) return;
             await updateName(userData.user_id, name);
             setTimeout(() => {
-                router.push(`/${userData.user_id}`);
+                router.push(`/${userData.user_id}`).then(_ => {
+                    location.reload();
+                });
             }, 3000)
 
         } catch (e) {
