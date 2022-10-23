@@ -8,6 +8,7 @@ import { Form, Formik } from 'formik';
 import { TextField } from '@/components/form/TextField';
 import InfoIcon from 'public/svg/Info.svg';
 import { CardMetadata, GenerateCardResponse, getCardMetadata, getUserById } from '@/api/common';
+import { DownloadButton } from '@/components/DownloadButton';
 
 export default function User({ userData, meta }: { userData: GenerateCardResponse, meta: CardMetadata}) {
 
@@ -24,6 +25,7 @@ export default function User({ userData, meta }: { userData: GenerateCardRespons
                         </div>
                         <h2 className="text-white text-3xl md:text-4xl mt-3 md:mt-5 font-bold uppercase text-center md:text-left">Your nft card is waiting for mint</h2>
                         <img src={meta.image} className="w-full mt-5 md:mt-10" alt=""/>
+                        <div className="flex justify-center md:justify-start mt-5"><DownloadButton url={meta.image}/></div>
                         <h3 className="font-bold text-white mb-0 mt-6 md:mt-20 uppercase text-center md:text-left">degen.cards</h3>
                     </div>
                     <div className="bg-white px-6 py-12 md:pl-12 md:py-40 md:pr-16 xl:pr-36">

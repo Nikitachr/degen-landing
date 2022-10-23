@@ -35,7 +35,7 @@ export const Name = () => {
                 >
                     <Form className="w-full">
                         <TextField label="Name" name="name" type="text" />
-                        <div className="flex justify-center md:justify-start mt-5"><DownloadButton url={cardMetadata?.image}/></div>
+                        {/*<div className="flex justify-center md:justify-start mt-5"><DownloadButton url={cardMetadata?.image}/></div>*/}
                         <div className="flex items-center gap-5 mt-5 flex-col md:flex-row">
                             <Button onClick={onSkip} type="button" outline>Skip</Button>
                             <Button type="submit">Approve</Button>

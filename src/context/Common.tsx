@@ -71,7 +71,7 @@ export const CommonContextProvider: FC<PropsWithChildren> = ({children}) => {
             await updateName(userData.user_id, name);
             setTimeout(() => {
                 router.push(`/${userData.user_id}`);
-            }, 1000)
+            }, 3000)
 
         } catch (e) {
             console.log(e);
