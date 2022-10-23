@@ -34,7 +34,7 @@ export interface ConirmImageResponse {
     tokenId: string;
 }
 
-const baseUrl = "http://52.203.242.218/api/v1/"
+const baseUrl = "http://52.203.242.218:8080/api/v1/"
 
 export const generateCard = (backgound_color: string, card_provider: string, email: string, image_id: string) => {
     return axios.post<GenerateCardResponse>(`${baseUrl}cards`, {backgound_color, card_provider, email, image_id}, {
