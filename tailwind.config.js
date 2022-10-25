@@ -26,6 +26,7 @@ module.exports = {
           800: 'rgb(var(--tw-color-primary-800) / <alpha-value>)',
           900: 'rgb(var(--tw-color-primary-900) / <alpha-value>)',
         },
+        green: "#50C878",
         dark: '#141C3F',
         grayBg: '#F0F0F0',
         aqua: "#90E3F3"

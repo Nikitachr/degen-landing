@@ -1,5 +1,6 @@
 import React, { createContext, FC, PropsWithChildren, useCallback, useState } from 'react';
 import {
+    addWalletAddress,
     CardMetadata,
     confirmImage,
     generateCard,
@@ -27,12 +28,13 @@ export interface ICommonContext {
     approveImage: () => void;
     userData?: GenerateCardResponse;
     setName: (name: string) => void;
+    addWallet: (address: string, userId: string) => void;
 }
 
 export const CommonContext = createContext<ICommonContext>(null as any)
 
-export const CommonContextProvider: FC<PropsWithChildren> = ({children}) => {
-    const [email, setEmail] = useState("");
+export const CommonContextProvider: FC<PropsWithChildren> = ({ children }) => {
+    const [email, setEmail] = useState('');
     const [step, setStep] = useState(FormStep.Email);
     const [metadataId, setMetadataId] = useState<string>('');
     const [cardMetadata, setCardMetadata] = useState<CardMetadata>();
@@ -80,5 +82,20 @@ export const CommonContextProvider: FC<PropsWithChildren> = ({children}) => {
         }
     }, [userData])
 
-    return <CommonContext.Provider value={{email, step, updateEmail, updateStep, createCard, cardMetadata, approveImage, setName, userData}}>{children}</CommonContext.Provider>
+    const addWallet = useCallback(async (address: string, userId: string) => {
+        await addWalletAddress(address, userId);
+    }, [userData])
+
+    return <CommonContext.Provider value={{
+        email,
+        step,
+        updateEmail,
+        updateStep,
+        createCard,
+        cardMetadata,
+        approveImage,
+        setName,
+        userData,
+        addWallet
+    }}>{children}</CommonContext.Provider>
 }

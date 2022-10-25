@@ -34,7 +34,7 @@ export interface ConirmImageResponse {
     tokenId: string;
 }
 
-const baseUrl = "https://52.203.242.218:8080/api/v1/"
+const baseUrl = "https://degen.cards:8080/api/v1/"
 
 export const generateCard = (backgound_color: string, card_provider: string, email: string, image_id: string) => {
     return axios.post<GenerateCardResponse>(`${baseUrl}cards`, {backgound_color, card_provider, email, image_id}, {
@@ -68,6 +68,15 @@ export const updateName = (userId: string, name: string) => {
 
 export const getUserById = (id: string) => {
     return axios.get<GenerateCardResponse>(`${baseUrl}users/${id}`, {
+        headers: {
+            "X-API-KEY": "dd5ddff9-5612-466f-a869-588c4f428c6e"
+        }
+    })
+}
+
+export const addWalletAddress = (address: string, user_id: string) => {
+    return axios.post<void>(`${baseUrl}transfer/${user_id}`, {}, {
+        params: {address},
         headers: {
             "X-API-KEY": "dd5ddff9-5612-466f-a869-588c4f428c6e"
         }
