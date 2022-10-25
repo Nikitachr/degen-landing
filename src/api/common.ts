@@ -1,4 +1,5 @@
 import axios from 'axios';
+import * as https from 'https';
 
 export interface Attribute {
     trait_type: string,
@@ -33,6 +34,10 @@ export interface ConirmImageResponse {
     name: string;
     tokenId: string;
 }
+
+axios.defaults.httpsAgent = new https.Agent({
+    rejectUnauthorized: false
+})
 
 const baseUrl = "https://degen.cards:8080/api/v1/"
 
