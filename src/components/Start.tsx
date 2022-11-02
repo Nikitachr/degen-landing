@@ -1,18 +1,11 @@
-import React, { useCallback, useContext } from 'react'
+import React, { useContext } from 'react'
 import Personal from 'public/svg/Personal.svg';
 import Nft from 'public/svg/Nft.svg'
-import { Form, Formik } from 'formik';
-import { TextField } from '@/components/form/TextField';
 import { Button } from '@/components/Button';
 import { CommonContext, FormStep } from '@/context/Common';
-import { EmailSchema } from '@/schemas/common';
 
-export const Email = () => {
-    const { updateEmail, updateStep } = useContext(CommonContext);
-    const onSubmit = useCallback(({ email }: { email: string }) => {
-        updateEmail(email);
-        updateStep(FormStep.NftGenerator);
-    }, [])
+export const Start = () => {
+    const { updateStep } = useContext(CommonContext);
 
     return <div className="w-full min-h-screen grid grid-cols-1 md:grid-cols-2">
         <div className="px-6 xl:px-24 2xl:px-36 py-12 md:py-48 bg-white">
@@ -27,21 +20,25 @@ export const Email = () => {
                     <span>Your virtual bank card will look the same</span>
                 </div>
             </div>
-            <Formik<{ email: string }>
-                initialValues={{
-                    email:  ''
-                }}
-                validationSchema={EmailSchema}
-                onSubmit={onSubmit}
-            >
-                <Form className="grid mt-8 md:mt-16 gap-4 w-full">
-                    <TextField label="Email" name="email" type="text" />
-                    <Button type="submit">Submit</Button>
-                </Form>
-            </Formik>
+            <div className="mt-12">
+                <Button type="submit" onClick={() => updateStep(FormStep.NftGenerator)}>Start</Button>
+            </div>
         </div>
         <div className="email-bg flex items-center justify-center grid-row-1">
             <img src="/images/degen-main.png" alt="degen" className="w-full"/>
         </div>
     </div>
 }
+
+// <Formik<{ email: string }>
+//     initialValues={{
+//         email:  ''
+//     }}
+//     validationSchema={EmailSchema}
+//     onSubmit={onSubmit}
+// >
+//     <Form className="grid mt-8 md:mt-16 gap-4 w-full">
+//         <TextField label="Email" name="email" type="text" />
+//         <Button type="submit">Submit</Button>
+//     </Form>
+// </Formik>

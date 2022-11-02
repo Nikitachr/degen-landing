@@ -1,5 +1,6 @@
 import React, { createContext, FC, PropsWithChildren, useCallback, useState } from 'react';
 import {
+    addEmail,
     addWalletAddress,
     CardMetadata,
     confirmImage,
@@ -12,7 +13,7 @@ import { GeneratorForm } from '@/components/Generator';
 import { useRouter } from 'next/router';
 
 export enum FormStep {
-    Email,
+    Start,
     NftGenerator,
     Preview,
     Name
@@ -29,13 +30,14 @@ export interface ICommonContext {
     userData?: GenerateCardResponse;
     setName: (name: string) => void;
     addWallet: (address: string, userId: string) => void;
+    submitEmail: (email: string, userId: string) => void;
 }
 
 export const CommonContext = createContext<ICommonContext>(null as any)
 
 export const CommonContextProvider: FC<PropsWithChildren> = ({ children }) => {
     const [email, setEmail] = useState('');
-    const [step, setStep] = useState(FormStep.Email);
+    const [step, setStep] = useState(FormStep.Start);
     const [metadataId, setMetadataId] = useState<string>('');
     const [cardMetadata, setCardMetadata] = useState<CardMetadata>();
     const [userData, setUserData] = useState<GenerateCardResponse>()
@@ -51,7 +53,7 @@ export const CommonContextProvider: FC<PropsWithChildren> = ({ children }) => {
 
     const createCard = useCallback(async (value: GeneratorForm) => {
         try {
-            const { data } = await generateCard(value.background, value.provider, email, value.imageId);
+            const { data } = await generateCard(value.background, value.provider, value.imageId);
             setUserData(data);
             setMetadataId(data.owned_metadata);
             const resp = await getCardMetadata(data.owned_metadata);
@@ -84,7 +86,11 @@ export const CommonContextProvider: FC<PropsWithChildren> = ({ children }) => {
 
     const addWallet = useCallback(async (address: string, userId: string) => {
         await addWalletAddress(address, userId);
-    }, [userData])
+    }, [])
+
+    const submitEmail = useCallback(async (email: string, userId: string) => {
+        await addEmail(email, userId);
+    }, []);
 
     return <CommonContext.Provider value={{
         email,
@@ -96,6 +102,7 @@ export const CommonContextProvider: FC<PropsWithChildren> = ({ children }) => {
         approveImage,
         setName,
         userData,
-        addWallet
+        addWallet,
+        submitEmail
     }}>{children}</CommonContext.Provider>
 }

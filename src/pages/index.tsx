@@ -4,12 +4,12 @@ import { useContext } from 'react';
 import Layout from '@/components/layout/Layout';
 import Seo from '@/components/Seo';
 
-import { Email } from '@/components/Email';
+import { Name } from '@/components/Name';
 import NextImage from '@/components/NextImage';
 import { CommonContext, FormStep } from '@/context/Common';
 import { Generator } from '@/components/Generator';
 import { Preview } from '@/components/Preview';
-import { Name } from '@/components/Name';
+import { Start } from '@/components/Start';
 
 export default function HomePage() {
     const {step} = useContext(CommonContext);
@@ -20,7 +20,7 @@ export default function HomePage() {
           <div className="logo">
               <NextImage src="/images/savechain-logo.png" alt="logo" width={145} height={35}/>
           </div>
-          {step === FormStep.Email && <Email />}
+          {step === FormStep.Start && <Start />}
           {step === FormStep.NftGenerator && <Generator />}
           {step === FormStep.Preview && <Preview />}
           {step === FormStep.Name && <Name />}

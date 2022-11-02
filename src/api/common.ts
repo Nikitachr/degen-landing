@@ -41,8 +41,16 @@ axios.defaults.httpsAgent = new https.Agent({
 
 const baseUrl = "https://degen.cards:8080/api/v1/"
 
-export const generateCard = (backgound_color: string, card_provider: string, email: string, image_id: string) => {
-    return axios.post<GenerateCardResponse>(`${baseUrl}cards`, {backgound_color, card_provider, email, image_id}, {
+export const generateCard = (backgound_color: string, card_provider: string, image_id: string) => {
+    return axios.post<GenerateCardResponse>(`${baseUrl}cards`, {backgound_color, card_provider, image_id}, {
+        headers: {
+            "X-API-KEY": "dd5ddff9-5612-466f-a869-588c4f428c6e"
+        }
+    })
+}
+
+export const addEmail = (email: string, user_id: string) => {
+    return axios.patch<GenerateCardResponse>(`${baseUrl}users/${user_id}`, {email}, {
         headers: {
             "X-API-KEY": "dd5ddff9-5612-466f-a869-588c4f428c6e"
         }

@@ -12,14 +12,29 @@ import { DownloadButton } from '@/components/DownloadButton';
 import { Button } from '@/components/Button';
 import { CommonContext } from '@/context/Common';
 
-export default function User({ userData, meta }: { userData: GenerateCardResponse, meta: CardMetadata }) {
-    const { addWallet } = useContext(CommonContext);
+export default function User({
+                                 userData,
+                                 meta,
+                                 isEmail
+                             }: { userData: GenerateCardResponse, meta: CardMetadata, isEmail: boolean }) {
+    const { addWallet, submitEmail } = useContext(CommonContext);
+
     const [transferAddress, setTransferAddress] = useState<string | undefined>(userData.transfer_address || undefined)
+    const [hasEmail, setHasEmail] = useState(isEmail);
 
     const onSubmit = useCallback(async ({ address }: { address: string }) => {
         try {
             await addWallet(address, userData.user_id);
             setTransferAddress(address);
+        } catch (e) {
+            console.log(e);
+        }
+    }, [])
+
+    const onSubmitEmail = useCallback(async ({ email }: { email: string }) => {
+        try {
+            await submitEmail(email, userData.user_id);
+            setHasEmail(true);
         } catch (e) {
             console.log(e);
         }
@@ -35,7 +50,7 @@ export default function User({ userData, meta }: { userData: GenerateCardRespons
                             <NextImage src="/images/savechain-logo.png" alt="logo" width={145} height={35}/>
                         </div>
                         <h2 className="text-white text-3xl md:text-4xl mt-3 md:mt-5 font-bold uppercase text-center md:text-left">
-                            {userData.transferred ? "Your nft is successfully minted" : "Your nft card is waiting for mint"}
+                            {userData.transferred ? 'Your nft is successfully minted' : 'Your nft card is waiting for mint'}
                         </h2>
                         <img src={meta.image} className="w-full mt-5 md:mt-10" alt=""/>
                         <div className="flex justify-center md:justify-start mt-5"><DownloadButton url={meta.image}/>
@@ -44,30 +59,50 @@ export default function User({ userData, meta }: { userData: GenerateCardRespons
                     </div>
                     <div className="bg-white px-6 py-12 md:pl-12 md:py-40 md:pr-16 xl:pr-36">
                         <div className="flex items-center gap-5 icon">
-                            <WalletIcon/>
-                            <span className="font-bold text-2xl">Wallet address (erc20)</span>
+                            {isEmail ? <>
+                                    <WalletIcon/>
+                                    <span className="font-bold text-2xl">Wallet address (erc20)</span>
+                                </> :
+                                <span className="font-bold text-2xl">Email</span>
+                            }
                         </div>
-                        {transferAddress ?
-                            <span className="font-bold text-sm mt-3 mb-12 block truncate">{transferAddress}</span>
-                            : <Formik<{ address: string }>
+                        {hasEmail ? transferAddress ?
+                                <span className="font-bold text-sm mt-3 mb-12 block truncate">{transferAddress}</span>
+                                : <Formik<{ address: string }>
+                                    initialValues={{
+                                        address: ''
+                                    }}
+                                    onSubmit={onSubmit}
+                                >
+                                    <Form className="w-full mt-5 mb-6 grid gap-4 md:mb-12">
+                                        <TextField label="Address" name="address" type="text"/>
+                                        <Button type="submit">Submit</Button>
+                                        <p>If you don’t have wallet now,it’s ok. You can close this page and add wallet
+                                            later.
+                                            Just click on the link in the email that was sent to you.</p>
+                                    </Form>
+
+                                </Formik>
+                            :
+                            <Formik<{ email: string }>
                                 initialValues={{
-                                    address: ''
+                                    email: ''
                                 }}
-                                onSubmit={onSubmit}
+                                onSubmit={onSubmitEmail}
                             >
                                 <Form className="w-full mt-5 mb-6 grid gap-4 md:mb-12">
-                                    <TextField label="Address" name="address" type="text"/>
+                                    <TextField label="Email" name="email" type="text"/>
                                     <Button type="submit">Submit</Button>
-                                    <p>If you don’t have wallet now,it’s ok. You can close this page and add wallet
-                                        later.
-                                        Just click on the link in the email that was sent to you.</p>
                                 </Form>
 
-                            </Formik>}
+                            </Formik>
+
+                        }
                         <div className="flex items-center gap-4">
-                            <div className={`w-5 min-w-5 h-5 rounded-full gap-5 ${userData.transferred ? "bg-green" : "bg-gray-400"}`} />
-                            <span className={`${!userData.transferred && "text-gray-400"} font-bold text-2xl`}>
-                                {userData.transferred ?  "Your nft card is successfully minted" : "Your NFT card is waiting to be minted"}
+                            <div
+                                className={`w-5 min-w-5 h-5 rounded-full gap-5 ${userData.transferred ? 'bg-green' : 'bg-gray-400'}`}/>
+                            <span className={`${!userData.transferred && 'text-gray-400'} font-bold text-2xl`}>
+                                {userData.transferred ? 'Your nft card is successfully minted' : 'Your NFT card is waiting to be minted'}
                             </span>
                         </div>
                         {!userData.transferred && <p className="text-lg mt-2">
@@ -95,5 +130,5 @@ export async function getServerSideProps(ctx: any) {
     const { data } = await getUserById(id);
     const meta = await getCardMetadata(data.owned_metadata);
     console.log(meta.data);
-    return { props: { userData: data, meta: meta.data } }
+    return { props: { userData: data, meta: meta.data, isEmail: !!data.email } }
 }
