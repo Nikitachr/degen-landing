@@ -59,7 +59,7 @@ export default function User({
                     </div>
                     <div className="bg-white px-6 py-12 md:pl-12 md:py-40 md:pr-16 xl:pr-36">
                         <div className="flex items-center gap-5 icon">
-                            {isEmail ? <>
+                            {hasEmail ? <>
                                     <WalletIcon/>
                                     <span className="font-bold text-2xl">Wallet address (erc20)</span>
                                 </> :
