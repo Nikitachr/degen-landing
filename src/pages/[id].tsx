@@ -4,7 +4,7 @@ import Seo from '@/components/Seo';
 import NextImage from '@/components/NextImage';
 
 import WalletIcon from 'public/svg/Wallet.svg';
-import { Form, Formik } from 'formik';
+import { Form, Formik, FormikHelpers } from 'formik';
 import { TextField } from '@/components/form/TextField';
 import InfoIcon from 'public/svg/Info.svg';
 import { CardMetadata, GenerateCardResponse, getCardMetadata, getUserById } from '@/api/common';
@@ -31,9 +31,11 @@ export default function User({
         }
     }, [])
 
-    const onSubmitEmail = useCallback(async ({ email }: { email: string }) => {
+    const onSubmitEmail = useCallback(async ({ email }: { email: string }, helpers: FormikHelpers<{email: string}>) => {
         try {
             await submitEmail(email, userData.user_id);
+            // @ts-ignore
+            helpers.setValues({address: ""})
             setHasEmail(true);
         } catch (e) {
             console.log(e);
