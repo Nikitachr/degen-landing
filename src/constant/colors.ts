@@ -16,7 +16,7 @@ export const bgColors = [
     hex: "#BE2633"
   },
   {
-    value: 'daekbrown',
+    value: 'darkbrown',
     hex: "#493C2B"
   },
   {
