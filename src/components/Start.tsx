@@ -1,11 +1,24 @@
-import React, { useContext } from 'react'
+import React, { useCallback, useContext } from 'react'
 import Personal from 'public/svg/Personal.svg';
 import Nft from 'public/svg/Nft.svg'
 import { Button } from '@/components/Button';
 import { CommonContext, FormStep } from '@/context/Common';
+import { useAccount, useConnectModal } from '@web3modal/react';
+import { useUpdateEffect } from '@/hooks/render';
+import { useRouter } from 'next/router';
 
 export const Start = () => {
     const { updateStep } = useContext(CommonContext);
+    const { open } = useConnectModal()
+    const {account} = useAccount();
+    const router = useRouter();
+
+    const connect = useCallback(() => {
+        if (!account.isConnected) {
+            open();
+        }
+        router.push('/web3')
+    }, [router, open, account])
 
     return <div className="w-full min-h-screen grid grid-cols-1 md:grid-cols-2">
         <div className="px-6 xl:px-24 2xl:px-36 py-12 md:py-48 bg-white">
@@ -20,9 +33,12 @@ export const Start = () => {
                     <span>Your virtual bank card will look the same</span>
                 </div>
             </div>
-            <div className="mt-12">
+            <div className="grid gap-4 mt-12">
                 <Button type="submit" onClick={() => updateStep(FormStep.NftGenerator)}>Start</Button>
+                <span className="text-center">or</span>
+                <Button type="submit" onClick={connect}>Use own nfts</Button>
             </div>
+
         </div>
         <div className="email-bg flex items-center justify-center grid-row-1">
             <img src="/images/degen-main.png" alt="degen" className="w-full"/>

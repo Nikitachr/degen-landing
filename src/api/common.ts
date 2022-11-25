@@ -49,6 +49,14 @@ export const generateCard = (backgound_color: string, card_provider: string, ima
     })
 }
 
+export const generateNFTCard = (backgound_color: string, card_provider: string, image_url: string) => {
+    return axios.post<GenerateCardResponse>(`${baseUrl}cards/custom`, {backgound_color, card_provider, image_url}, {
+        headers: {
+            "X-API-KEY": "dd5ddff9-5612-466f-a869-588c4f428c6e"
+        }
+    })
+}
+
 export const addEmail = (email: string, user_id: string) => {
     return axios.patch<GenerateCardResponse>(`${baseUrl}users/${user_id}`, {email}, {
         headers: {

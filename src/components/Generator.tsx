@@ -1,9 +1,11 @@
-import React, { useCallback, useContext, useMemo } from 'react';
 import { Form, Formik } from 'formik';
+import React, { useCallback, useContext } from 'react';
+
 import { Button } from '@/components/Button';
-import { NftSelect } from '@/components/form/ImageSelect';
 import { BackgroundSelect } from '@/components/form/Backgroundselect';
+import { NftSelect } from '@/components/form/ImageSelect';
 import { ProviderSelect } from '@/components/form/ProviderSelect';
+
 import { CommonContext } from '@/context/Common';
 import { GeneratorSchema } from '@/schemas/common';
 
@@ -14,11 +16,11 @@ export interface GeneratorForm {
 }
 
 export const Generator = () => {
-    const {createCard} = useContext(CommonContext)
+    const { createCard } = useContext(CommonContext)
 
     const onSubmit = useCallback((val: GeneratorForm) => {
         createCard(val);
-    }, []);
+    }, [createCard]);
 
     return <div className="w-full h-full px-6 py-24 md:px-12 md:py-24 lg:p-24 xl:px-36">
         <h2 className="text-white uppercase font-bold text-4xl text-center">choose the skin for the nft card</h2>

@@ -1,4 +1,8 @@
+import { useRouter } from 'next/router';
 import React, { createContext, FC, PropsWithChildren, useCallback, useState } from 'react';
+
+import { GeneratorForm } from '@/components/Generator';
+
 import {
     addEmail,
     addWalletAddress,
@@ -9,8 +13,6 @@ import {
     getCardMetadata,
     updateName
 } from '@/api/common';
-import { GeneratorForm } from '@/components/Generator';
-import { useRouter } from 'next/router';
 
 export enum FormStep {
     Start,
@@ -62,7 +64,7 @@ export const CommonContextProvider: FC<PropsWithChildren> = ({ children }) => {
         } catch (e) {
             console.log(e);
         }
-    }, [email]);
+    }, []);
 
     const approveImage = useCallback(async () => {
         await confirmImage(metadataId);
@@ -82,7 +84,7 @@ export const CommonContextProvider: FC<PropsWithChildren> = ({ children }) => {
         } catch (e) {
             console.log(e);
         }
-    }, [userData])
+    }, [router, userData])
 
     const addWallet = useCallback(async (address: string, userId: string) => {
         await addWalletAddress(address, userId);

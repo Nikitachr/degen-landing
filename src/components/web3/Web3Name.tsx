@@ -5,11 +5,11 @@ import React, { useCallback, useContext } from 'react';
 import { Button } from '@/components/Button';
 import { TextField } from '@/components/form/TextField';
 
-import { CommonContext } from '@/context/Common';
+import { Web3Context } from '@/context/Web3Context';
 import { NameSchema } from '@/schemas/common';
 
-export const Name = () => {
-    const { cardMetadata, userData, setName } = useContext(CommonContext);
+export const Web3Name = () => {
+    const { cardMetadata, userData, setName } = useContext(Web3Context);
     const router = useRouter()
 
     const onSubmit = useCallback(({ name }: { name: string }) => {
@@ -18,7 +18,7 @@ export const Name = () => {
 
     const onSkip = useCallback(() => {
         if (!userData) return;
-        router.push(`/${userData.user_id}`);
+        router.push(`/web3/${userData.user_id}`);
     }, [router, userData])
 
     return <div className="px-6 py-32 md:px-12 md:py-40 lg:px-24 xl:px-36">
@@ -45,6 +45,5 @@ export const Name = () => {
                 </Formik>
             </div>
         </div>
-
     </div>
 }
