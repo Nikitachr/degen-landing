@@ -1,5 +1,7 @@
+import { useWeb3Modal } from '@web3modal/react';
 import { Form, Formik, FormikHelpers } from 'formik';
 import React, { useCallback, useContext, useState } from 'react';
+import { useAccount } from 'wagmi';
 
 import { Button } from '@/components/Button';
 import { DownloadButton } from '@/components/DownloadButton';
@@ -12,16 +14,30 @@ import { CardMetadata, GenerateCardResponse, getCardMetadata, getUserById } from
 import { Web3Context } from '@/context/Web3Context';
 
 import InfoIcon from '~/svg/Info.svg';
-import WalletIcon from '~/svg/Wallet.svg';
 
 export default function User({
                                  userData,
                                  meta,
-                                 isEmail
-                             }: { userData: GenerateCardResponse, meta: CardMetadata, isEmail: boolean }) {
-    const { submitEmail } = useContext(Web3Context);
-
+                                 isEmail,
+                             }: { userData: GenerateCardResponse, meta: CardMetadata, isEmail: boolean, }) {
+    const { submitEmail, mint, isPendingTransaction } = useContext(Web3Context);
+    const [isMinted, setIsMinted] = useState(meta.tokenId !== null);
     const [hasEmail, setHasEmail] = useState(isEmail);
+    const account = useAccount();
+    const { open } = useWeb3Modal();
+
+    const mintClick = useCallback(async () => {
+        if (!account.isConnected) {
+            open();
+            return
+        }
+        try {
+            await mint(userData.owned_metadata);
+            setIsMinted(true);
+        } catch (e) {
+            console.log(e);
+        }
+    }, [mint, userData.owned_metadata])
 
     const onSubmitEmail = useCallback(async ({ email }: { email: string }, helpers: FormikHelpers<{email: string}>) => {
         try {
@@ -52,16 +68,17 @@ export default function User({
                         <h3 className="font-bold text-white mb-0 mt-6 md:mt-20 uppercase text-center md:text-left">degen.cards</h3>
                     </div>
                     <div className="bg-white px-6 py-12 md:pl-12 md:py-40 md:pr-16 xl:pr-36">
-                        <div className="flex items-center gap-5 icon">
+                        {!isMinted && <div className="flex items-center gap-5 icon">
                             {hasEmail ? <>
-                                    <WalletIcon/>
-                                    <span className="font-bold text-2xl">Wallet address (erc20)</span>
+                                    <span className="font-bold text-2xl">Mint</span>
                                 </> :
                                 <span className="font-bold text-2xl">Email</span>
                             }
-                        </div>
-                        {hasEmail ?
-                            <div>mint</div>
+                        </div>}
+                        {!isMinted && (hasEmail ?
+                            <div className="mb-8 mt-2">
+                                {isPendingTransaction ? <span>Transaction is pending...</span> : <Button type="button" onClick={mintClick}>mint</Button>}
+                            </div>
                             :
                             <Formik<{ email: string }>
                                 initialValues={{
@@ -76,15 +93,15 @@ export default function User({
 
                             </Formik>
 
-                        }
+                        )}
                         <div className="flex items-center gap-4">
                             <div
-                                className={`w-5 min-w-5 h-5 rounded-full gap-5 ${userData.transferred ? 'bg-green' : 'bg-gray-400'}`}/>
-                            <span className={`${!userData.transferred && 'text-gray-400'} font-bold text-2xl`}>
-                                {userData.transferred ? 'Your nft card is successfully minted' : 'Your NFT card is waiting to be minted'}
+                                className={`w-5 min-w-5 h-5 rounded-full gap-5 ${isMinted ? 'bg-green' : 'bg-gray-400'}`}/>
+                            <span className={`${!isMinted && 'text-gray-400'} font-bold text-2xl`}>
+                                {isMinted ? 'Your nft card is successfully minted' : 'Your NFT card is waiting to be minted'}
                             </span>
                         </div>
-                        {!userData.transferred && <p className="text-lg mt-2">
+                        {!isMinted && <p className="text-lg mt-2">
                             you will get email when the card is minted
                             <br/>
                             you can close this page
@@ -108,6 +125,5 @@ export async function getServerSideProps(ctx: any) {
     const id = ctx.params.id;
     const { data } = await getUserById(id);
     const meta = await getCardMetadata(data.owned_metadata);
-    console.log(meta.data);
     return { props: { userData: data, meta: meta.data, isEmail: !!data.email } }
 }

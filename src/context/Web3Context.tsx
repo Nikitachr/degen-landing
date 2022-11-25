@@ -1,17 +1,21 @@
+import { ethers } from 'ethers';
+import { formatUnits } from 'ethers/lib/utils';
 import { useRouter } from 'next/router';
 import { createContext, FC, PropsWithChildren, useCallback, useState } from 'react';
+import { useAccount, useSigner } from 'wagmi';
 
 import { GeneratorFormNFT } from '@/components/web3/Web3Generate';
 
 import {
     addEmail,
     CardMetadata,
-    confirmImage,
+    confirmImage, createId,
     GenerateCardResponse,
     generateNFTCard,
     getCardMetadata,
     updateName
 } from '@/api/common';
+import degenAbi from '@/constant/NFTABI.json';
 
 export enum EWeb3Flow {
     GENERATE,
@@ -28,7 +32,11 @@ export interface IWeb3Context {
     userData?: GenerateCardResponse;
     setName: (name: string) => void;
     submitEmail: (email: string, userId: string) => void;
+    mint: (metadataId: string) => void;
+    isPendingTransaction: boolean;
 }
+
+const degenAddress = '0x1C99F29bc22F8CaeA74dBE2f6F5D79fcf33EaBe5';
 
 export const Web3Context = createContext<IWeb3Context>(null as any);
 
@@ -37,7 +45,11 @@ export const Web3Provider: FC<PropsWithChildren<any>> = ({ children }) => {
     const [metadataId, setMetadataId] = useState<string>('');
     const [cardMetadata, setCardMetadata] = useState<CardMetadata>();
     const [userData, setUserData] = useState<GenerateCardResponse>();
+    const [isPendingTransaction, setIsPendingTransaction] = useState(false);
     const router = useRouter();
+    const {data } = useSigner();
+
+    const { address } = useAccount();
 
     const updateStep = useCallback((step: EWeb3Flow) => {
         setStep(step);
@@ -79,7 +91,7 @@ export const Web3Provider: FC<PropsWithChildren<any>> = ({ children }) => {
             if (!userData) return;
             await updateName(userData.user_id, name);
             setTimeout(() => {
-                router.push(`/${userData.user_id}`).then(_ => {
+                router.push(`/web3/${userData.user_id}`).then(_ => {
                     location.reload();
                 });
             }, 3000)
@@ -89,9 +101,26 @@ export const Web3Provider: FC<PropsWithChildren<any>> = ({ children }) => {
         }
     }, [router, userData]);
 
+    const mint = useCallback(async (metadataId: string) => {
+        setIsPendingTransaction(true);
+        try {
+            // @ts-ignore
+            const contract = new ethers.Contract(degenAddress, degenAbi, data);
+            const currentTokenId = await contract.totalSupply();
+            const tx = await contract.safeMint(address);
+            await tx.wait();
+            await createId(metadataId, +formatUnits(currentTokenId, 'wei'));
+            setIsPendingTransaction(false);
+        }
+        catch (e) {
+            console.log(e);
+            setIsPendingTransaction(false)
+        }
+    }, [address, data])
+
     const submitEmail = useCallback(async (email: string, userId: string) => {
         await addEmail(email, userId);
     }, []);
 
-    return <Web3Context.Provider value={{ step, updateStep, createCard, cardMetadata, approveImage, setName, userData, submitEmail }}>{children}</Web3Context.Provider>
+    return <Web3Context.Provider value={{ step, updateStep, createCard, cardMetadata, approveImage, setName, userData, submitEmail, mint, isPendingTransaction }}>{children}</Web3Context.Provider>
 }

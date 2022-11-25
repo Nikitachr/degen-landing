@@ -103,3 +103,11 @@ export const addWalletAddress = (address: string, user_id: string) => {
         }
     })
 }
+
+export const createId = (metadataId: string, token_id: number) => {
+    return axios.post<void>(`${baseUrl}cards/${metadataId}/token`, {token_id}, {
+        headers: {
+            "X-API-KEY": "dd5ddff9-5612-466f-a869-588c4f428c6e"
+        }
+    })
+}

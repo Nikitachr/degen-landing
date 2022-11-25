@@ -1,6 +1,7 @@
-import { useAccount, Web3Button } from '@web3modal/react';
+import { Web3Button } from '@web3modal/react';
 import { Form, Formik } from 'formik';
 import React, { useContext } from 'react';
+import { useAccount } from 'wagmi';
 
 import { Button } from '@/components/Button';
 import { BackgroundSelect } from '@/components/form/Backgroundselect';
@@ -18,7 +19,7 @@ export interface GeneratorFormNFT {
 
 
 export const Web3Generate = () => {
-    const {account} = useAccount();
+    const account = useAccount();
     const {createCard} = useContext(Web3Context);
 
     return <div className="w-full h-full px-6 py-24 md:px-12 md:py-24 lg:p-24 xl:px-36">

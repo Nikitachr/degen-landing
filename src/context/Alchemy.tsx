@@ -1,6 +1,6 @@
-import { useAccount } from '@web3modal/react';
 import { Alchemy, Network, OwnedNft } from 'alchemy-sdk';
 import { createContext, FC, PropsWithChildren, useCallback, useEffect, useState } from 'react';
+import { useAccount } from 'wagmi';
 
 const settings = {
     apiKey: 'BRg0XYVEFrprv1Yz3l7GG_F601YfaRvR',
@@ -17,7 +17,7 @@ export const AlchemyContext = createContext<IAlchemyContext>(null as any)
 
 export const AlchemyProvider: FC<PropsWithChildren<any>> = ({ children }) => {
     const [ownedNFTs, setOwnedNFTs] = useState<OwnedNft[]>([]);
-    const { account } = useAccount()
+    const { address } = useAccount()
 
 
     const fetchNFTs = useCallback(async (account: string) => {
@@ -26,10 +26,10 @@ export const AlchemyProvider: FC<PropsWithChildren<any>> = ({ children }) => {
     }, [])
 
     useEffect(() => {
-        if (account.address) {
-            fetchNFTs(account.address);
+        if (address) {
+            fetchNFTs(address);
         }
-    }, [account.address, fetchNFTs])
+    }, [address, fetchNFTs])
 
     return <AlchemyContext.Provider value={{
         ownedNFTs
