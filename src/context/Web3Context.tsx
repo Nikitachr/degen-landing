@@ -1,10 +1,10 @@
-import { ethers } from 'ethers';
-import { formatUnits } from 'ethers/lib/utils';
-import { useRouter } from 'next/router';
-import { createContext, FC, PropsWithChildren, useCallback, useState } from 'react';
-import { useAccount, useSigner } from 'wagmi';
+import {ethers} from 'ethers';
+import {formatUnits} from 'ethers/lib/utils';
+import {useRouter} from 'next/router';
+import {createContext, FC, PropsWithChildren, useCallback, useState} from 'react';
+import {useAccount, useSigner} from 'wagmi';
 
-import { GeneratorFormNFT } from '@/components/web3/Web3Generate';
+import {GeneratorFormNFT} from '@/components/web3/Web3Generate';
 
 import {
     addEmail,
@@ -18,6 +18,8 @@ import {
 import degenAbi from '@/constant/NFTABI.json';
 
 export enum EWeb3Flow {
+    DEGEN,
+    NONFT,
     GENERATE,
     PREVIEW,
     NAME
@@ -34,22 +36,32 @@ export interface IWeb3Context {
     submitEmail: (email: string, userId: string) => void;
     mint: (metadataId: string) => void;
     isPendingTransaction: boolean;
+    selectedTokenId?: string;
+    selectTokenId: (id: string) => void;
+    setStep: (step: EWeb3Flow) => void;
 }
 
 const degenAddress = '0x1C99F29bc22F8CaeA74dBE2f6F5D79fcf33EaBe5';
 
 export const Web3Context = createContext<IWeb3Context>(null as any);
 
-export const Web3Provider: FC<PropsWithChildren<any>> = ({ children }) => {
-    const [step, setStep] = useState(EWeb3Flow.GENERATE);
+export const Web3Provider: FC<PropsWithChildren<any>> = ({children}) => {
+    const [step, setStep] = useState(EWeb3Flow.DEGEN);
     const [metadataId, setMetadataId] = useState<string>('');
     const [cardMetadata, setCardMetadata] = useState<CardMetadata>();
+    const [selectedTokenId, setSelectedTokenId] = useState<string>();
     const [userData, setUserData] = useState<GenerateCardResponse>();
     const [isPendingTransaction, setIsPendingTransaction] = useState(false);
     const router = useRouter();
-    const {data } = useSigner();
+    const {data} = useSigner();
 
-    const { address } = useAccount();
+    const {address} = useAccount();
+
+    const selectTokenId = useCallback((id: string) => {
+        setSelectedTokenId(id);
+    }, []);
+
+
 
     const updateStep = useCallback((step: EWeb3Flow) => {
         setStep(step);
@@ -75,7 +87,7 @@ export const Web3Provider: FC<PropsWithChildren<any>> = ({ children }) => {
 
     const createCard = useCallback(async (value: GeneratorFormNFT) => {
         try {
-            const { data } = await generateNFTCard(value.background, value.provider, value.image.url);
+            const {data} = await generateNFTCard(value.background, value.provider, value.image.url);
             setUserData(data);
             setMetadataId(data.owned_metadata);
             const resp = await getCardMetadata(data.owned_metadata);
@@ -111,8 +123,7 @@ export const Web3Provider: FC<PropsWithChildren<any>> = ({ children }) => {
             await tx.wait();
             await createId(metadataId, +formatUnits(currentTokenId, 'wei'));
             setIsPendingTransaction(false);
-        }
-        catch (e) {
+        } catch (e) {
             console.log(e);
             setIsPendingTransaction(false)
         }
@@ -122,5 +133,19 @@ export const Web3Provider: FC<PropsWithChildren<any>> = ({ children }) => {
         await addEmail(email, userId);
     }, []);
 
-    return <Web3Context.Provider value={{ step, updateStep, createCard, cardMetadata, approveImage, setName, userData, submitEmail, mint, isPendingTransaction }}>{children}</Web3Context.Provider>
+    return <Web3Context.Provider value={{
+        step,
+        updateStep,
+        createCard,
+        cardMetadata,
+        approveImage,
+        setName,
+        userData,
+        submitEmail,
+        mint,
+        isPendingTransaction,
+        selectTokenId,
+        selectedTokenId,
+        setStep
+    }}>{children}</Web3Context.Provider>
 }

@@ -165,3 +165,11 @@ main {
   width: 33px;
   height: 33px;
 }
+
+.gradient-pink {
+  background: linear-gradient(43.34deg, #4C7CF3 -22.42%, #FE5BDF 101.71%);
+}
+
+.button-gradient {
+  background: linear-gradient(92.77deg, #5AAFF5 -11.52%, #4164DA 100.77%);
+}

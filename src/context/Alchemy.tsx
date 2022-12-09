@@ -10,28 +10,43 @@ const settings = {
 const alchemy = new Alchemy(settings);
 
 export interface IAlchemyContext {
-    ownedNFTs: OwnedNft[]
+    ownedNFTs: OwnedNft[];
+    degenCards: OwnedNft[];
+    isLoading: boolean;
 }
+
+const DEGEN_CARD_ADDRESS = '0x520f6fb624daE4d1a4e81cA5a53177838D62da9E';
 
 export const AlchemyContext = createContext<IAlchemyContext>(null as any)
 
 export const AlchemyProvider: FC<PropsWithChildren<any>> = ({ children }) => {
     const [ownedNFTs, setOwnedNFTs] = useState<OwnedNft[]>([]);
+    const [degenCards, setDegenCards] = useState<OwnedNft[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
     const { address } = useAccount()
 
+    const fetchDegenCards = useCallback(async (account: string) => {
+        setIsLoading(true);
+        const nfts = await alchemy.nft.getNftsForOwner(account, {contractAddresses: [DEGEN_CARD_ADDRESS]});
+        setDegenCards(nfts.ownedNfts);
+        setIsLoading(false);
+    }, [])
 
     const fetchNFTs = useCallback(async (account: string) => {
         const nfts = await alchemy.nft.getNftsForOwner(account);
-        setOwnedNFTs(nfts.ownedNfts);
+        setOwnedNFTs(nfts.ownedNfts.filter(el => el.contract.address.toUpperCase() !== DEGEN_CARD_ADDRESS.toUpperCase()));
     }, [])
 
     useEffect(() => {
         if (address) {
             fetchNFTs(address);
+            fetchDegenCards(address);
         }
-    }, [address, fetchNFTs])
+    }, [address, fetchNFTs, fetchDegenCards])
 
     return <AlchemyContext.Provider value={{
-        ownedNFTs
+        ownedNFTs,
+        degenCards,
+        isLoading
     }}>{children}</AlchemyContext.Provider>
 }

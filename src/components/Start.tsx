@@ -3,14 +3,15 @@ import Personal from 'public/svg/Personal.svg';
 import Nft from 'public/svg/Nft.svg'
 import { Button } from '@/components/Button';
 import { CommonContext, FormStep } from '@/context/Common';
-import { useAccount, useConnectModal } from '@web3modal/react';
 import { useUpdateEffect } from '@/hooks/render';
 import { useRouter } from 'next/router';
+import {useWeb3Modal} from "@web3modal/react";
+import {useAccount} from "wagmi";
 
 export const Start = () => {
     const { updateStep } = useContext(CommonContext);
-    const { open } = useConnectModal()
-    const {account} = useAccount();
+    const { open } = useWeb3Modal()
+    const account = useAccount();
     const router = useRouter();
 
     const connect = useCallback(() => {
