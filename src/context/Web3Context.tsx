@@ -34,14 +34,14 @@ export interface IWeb3Context {
     userData?: GenerateCardResponse;
     setName: (name: string) => void;
     submitEmail: (email: string, userId: string) => void;
-    mint: (metadataId: string) => void;
+    mint: (metadataId: string, tokenId: number) => void;
     isPendingTransaction: boolean;
     selectedTokenId?: string;
     selectTokenId: (id: string) => void;
     setStep: (step: EWeb3Flow) => void;
 }
 
-const degenAddress = '0x1C99F29bc22F8CaeA74dBE2f6F5D79fcf33EaBe5';
+const degenAddress = '0xaC65D0033B7b484DcD782693B06f8636e5948e4C';
 
 export const Web3Context = createContext<IWeb3Context>(null as any);
 
@@ -59,6 +59,7 @@ export const Web3Provider: FC<PropsWithChildren<any>> = ({children}) => {
 
     const selectTokenId = useCallback((id: string) => {
         setSelectedTokenId(id);
+        console.log(id, 'id');
     }, []);
 
 
@@ -87,7 +88,7 @@ export const Web3Provider: FC<PropsWithChildren<any>> = ({children}) => {
 
     const createCard = useCallback(async (value: GeneratorFormNFT) => {
         try {
-            const {data} = await generateNFTCard(value.background, value.provider, value.image.url);
+            const {data} = await generateNFTCard(value.background, value.provider, value.image.url, +selectedTokenId || 0);
             setUserData(data);
             setMetadataId(data.owned_metadata);
             const resp = await getCardMetadata(data.owned_metadata);
@@ -96,7 +97,7 @@ export const Web3Provider: FC<PropsWithChildren<any>> = ({children}) => {
         } catch (e) {
             console.log(e);
         }
-    }, []);
+    }, [selectedTokenId]);
 
     const setName = useCallback(async (name: string) => {
         try {
@@ -113,15 +114,11 @@ export const Web3Provider: FC<PropsWithChildren<any>> = ({children}) => {
         }
     }, [router, userData]);
 
-    const mint = useCallback(async (metadataId: string) => {
+    const mint = useCallback(async (metadataId: string, tokenId: number) => {
         setIsPendingTransaction(true);
         try {
             // @ts-ignore
-            const contract = new ethers.Contract(degenAddress, degenAbi, data);
-            const currentTokenId = await contract.totalSupply();
-            const tx = await contract.safeMint(address);
-            await tx.wait();
-            await createId(metadataId, +formatUnits(currentTokenId, 'wei'));
+            await createId(metadataId, +tokenId);
             setIsPendingTransaction(false);
         } catch (e) {
             console.log(e);

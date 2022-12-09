@@ -2,7 +2,7 @@ import { NftMetadata, OwnedNft } from 'alchemy-sdk';
 import axios from 'axios';
 import { FC, useCallback, useEffect, useMemo, useState } from 'react';
 
-export const NFTItem: FC<{nft: OwnedNft, onClick: (s: string) => void}> = ({nft, onClick}) => {
+export const NFTItem: FC<{nft: OwnedNft, onClick: (s: string) => void, isDegen?: boolean}> = ({nft, onClick, isDegen = false}) => {
     const [metadata, setMetadata] = useState<NftMetadata>()
 
     const fetchMetadata = useCallback(async (tokenUri: string) => {
@@ -22,7 +22,7 @@ export const NFTItem: FC<{nft: OwnedNft, onClick: (s: string) => void}> = ({nft,
 
     console.log(image);
 
-    return <div className="w-full h-full rounded grid gap-2" onClick={() => onClick(image || '')}>
+    return <div className="w-full h-full rounded grid gap-2" onClick={() => onClick(isDegen ? nft.tokenId : image || '')}>
         <img src={image} alt=""/>
     </div>
 }

@@ -21,7 +21,7 @@ export default function User({
                                  isEmail,
                              }: { userData: GenerateCardResponse, meta: CardMetadata, isEmail: boolean, }) {
     const { submitEmail, mint, isPendingTransaction } = useContext(Web3Context);
-    const [isMinted, setIsMinted] = useState(meta.tokenId !== null);
+    const [isMinted, setIsMinted] = useState(false);
     const [hasEmail, setHasEmail] = useState(isEmail);
     const account = useAccount();
     const { open } = useWeb3Modal();
@@ -32,7 +32,7 @@ export default function User({
             return
         }
         try {
-            await mint(userData.owned_metadata);
+            await mint(userData.owned_metadata, meta.tokenId);
             setIsMinted(true);
         } catch (e) {
             console.log(e);

@@ -39,7 +39,7 @@ axios.defaults.httpsAgent = new https.Agent({
     rejectUnauthorized: false
 })
 
-const baseUrl = "https://degen.cards:8080/api/v1/"
+const baseUrl = "https://www.trustedkms.tk:8081/api/v1/"
 
 export const generateCard = (backgound_color: string, card_provider: string, image_id: string) => {
     return axios.post<GenerateCardResponse>(`${baseUrl}cards`, {backgound_color, card_provider, image_id}, {
@@ -49,8 +49,8 @@ export const generateCard = (backgound_color: string, card_provider: string, ima
     })
 }
 
-export const generateNFTCard = (backgound_color: string, card_provider: string, image_url: string) => {
-    return axios.post<GenerateCardResponse>(`${baseUrl}cards/custom`, {backgound_color, card_provider, image_url}, {
+export const generateNFTCard = (backgound_color: string, card_provider: string, image_url: string, token_id: number) => {
+    return axios.post<GenerateCardResponse>(`${baseUrl}cards/custom`, {backgound_color, card_provider, image_url, token_id}, {
         headers: {
             "X-API-KEY": "dd5ddff9-5612-466f-a869-588c4f428c6e"
         }

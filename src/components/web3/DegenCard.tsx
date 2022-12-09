@@ -4,6 +4,7 @@ import {Button} from "@/components/Button";
 
 import {AlchemyContext} from "@/context/Alchemy";
 import {EWeb3Flow, Web3Context} from "@/context/Web3Context";
+import {NFTItem} from "@/components/web3/NFTItem";
 
 export const DegenCard = () => {
     const {selectTokenId, setStep} = useContext(Web3Context);
@@ -41,7 +42,9 @@ export const DegenCard = () => {
                 : <>
                     <div className="grid grid-cols-4 gap-2">
                         {degenCards.map(el => (
-                            <div key={el.tokenId} className={`bg-white cursor-pointer h-48 w-full border rounded-2xl ${el.tokenId === selectedCard ? 'border border-black' : 'border-gray-300'}`} onClick={() => setSelectedCard(el.tokenId)}/>
+                            <div key={el.tokenId} className={`bg-white cursor-pointer overflow-hidden w-full border rounded-2xl ${el.tokenId === selectedCard ? 'border border-black' : 'border-gray-300'}`}>
+                                <NFTItem onClick={(el) => setSelectedCard(el)} isDegen={true} nft={el}/>
+                            </div>
                         ))}
 
 

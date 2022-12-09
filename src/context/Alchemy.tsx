@@ -15,7 +15,7 @@ export interface IAlchemyContext {
     isLoading: boolean;
 }
 
-const DEGEN_CARD_ADDRESS = '0x520f6fb624daE4d1a4e81cA5a53177838D62da9E';
+const DEGEN_CARD_ADDRESS = '0xaC65D0033B7b484DcD782693B06f8636e5948e4C';
 
 export const AlchemyContext = createContext<IAlchemyContext>(null as any)
 
