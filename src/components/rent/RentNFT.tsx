@@ -1,9 +1,11 @@
-import {FC, useCallback, useEffect, useMemo, useState} from "react";
+import {FC, useCallback, useContext, useEffect, useMemo, useState} from "react";
 import {NftMetadata, OwnedNft} from "alchemy-sdk";
 import axios from "axios";
+import {RentContext} from "@/context/Rent";
 
-export const RentNFT: FC<{nft: OwnedNft, onClick: (nft: OwnedNft) => void}> = ({nft, onClick}) => {
+export const RentNFT: FC<{nft: OwnedNft}> = ({nft}) => {
     const [metadata, setMetadata] = useState<NftMetadata>()
+    const { openModal } = useContext(RentContext);
 
     const fetchMetadata = useCallback(async (tokenUri: string) => {
         const res = await axios.get(tokenUri);
@@ -16,7 +18,6 @@ export const RentNFT: FC<{nft: OwnedNft, onClick: (nft: OwnedNft) => void}> = ({
         }
     }, [fetchMetadata, nft.tokenUri])
 
-    console.log(nft);
     const image = useMemo(() => {
         // @ts-ignore
         return metadata?.image?.replace("ipfs://", "https://ipfs.io/") || metadata?.image_url;
@@ -27,7 +28,7 @@ export const RentNFT: FC<{nft: OwnedNft, onClick: (nft: OwnedNft) => void}> = ({
         <p className="font-bold">{nft.title}</p>
         <p>0.0001 WETH</p>
         <button className="w-full mt-4 rounded-xl uppercase font-bold text-white p-2 button-gradient"
-            onClick={() => onClick(nft)}
+            onClick={() => openModal(nft, image)}
         >
             Rent
         </button>

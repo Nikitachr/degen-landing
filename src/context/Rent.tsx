@@ -6,7 +6,7 @@ import {OwnedNft} from "alchemy-sdk";
 // }
 
 export interface IRentContext {
-    rentModal?: OwnedNft;
+    rentModal?: OwnedNft & {img: string};
     openModal: (nft: OwnedNft, img: string) => void;
     closeModal: () => void;
 }
