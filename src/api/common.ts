@@ -111,3 +111,11 @@ export const createId = (metadataId: string, token_id: number) => {
         }
     })
 }
+
+export const approveCustomImage = async (background_color: string, card_provider: string, image_url: string, token_id: string) => {
+    return axios.put<GenerateCardResponse>(`${baseUrl}cards`, {token_id, background_color, image_url, card_provider}, {
+        headers: {
+            "X-API-KEY": "dd5ddff9-5612-466f-a869-588c4f428c6e"
+        }
+    })
+}

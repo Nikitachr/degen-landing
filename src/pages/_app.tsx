@@ -9,6 +9,8 @@ import '@/styles/colors.css';
 
 import { CommonContextProvider } from '@/context/Common';
 import { Web3Provider } from '@/context/Web3Context';
+import {AlchemyProvider} from "@/context/Alchemy";
+import React from "react";
 
 /**
  * !STARTERCONF info
@@ -41,7 +43,9 @@ function MyApp({ Component, pageProps }: AppProps) {
   return <CommonContextProvider>
       <WagmiConfig client={wagmiClient}>
           <Web3Provider>
-              <Component {...pageProps} />
+              <AlchemyProvider>
+                  <Component {...pageProps} />
+              </AlchemyProvider>
           </Web3Provider>
       </WagmiConfig>
       <Web3Modal

@@ -20,7 +20,7 @@ export default function User({
                                  meta,
                                  isEmail,
                              }: { userData: GenerateCardResponse, meta: CardMetadata, isEmail: boolean, }) {
-    const { submitEmail, mint, isPendingTransaction } = useContext(Web3Context);
+    const { submitEmail, mint, isPendingTransaction, linkToNTF } = useContext(Web3Context);
     const [isMinted, setIsMinted] = useState(false);
     const [hasEmail, setHasEmail] = useState(isEmail);
     const account = useAccount();
@@ -38,6 +38,11 @@ export default function User({
             console.log(e);
         }
     }, [mint, userData.owned_metadata])
+
+    const attachTonNFT = useCallback(async () => {
+        // @ts-ignore
+        await linkToNTF(meta.attributes.find(el => el.trait_type === 'background').value, meta.attributes.find(el => el.trait_type === 'provider').value, meta.image, meta.tokenId.toString());
+    }, [])
 
     const onSubmitEmail = useCallback(async ({ email }: { email: string }, helpers: FormikHelpers<{email: string}>) => {
         try {
@@ -77,7 +82,7 @@ export default function User({
                         </div>}
                         {!isMinted && (hasEmail ?
                             <div className="mb-8 mt-2">
-                                {isPendingTransaction ? <span>Transaction is pending...</span> : <Button type="button" onClick={mintClick}>mint</Button>}
+                                {isPendingTransaction ? <span>Transaction is pending...</span> : <Button type="button" onClick={attachTonNFT}>mint</Button>}
                             </div>
                             :
                             <Formik<{ email: string }>

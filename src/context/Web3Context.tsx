@@ -1,5 +1,3 @@
-import {ethers} from 'ethers';
-import {formatUnits} from 'ethers/lib/utils';
 import {useRouter} from 'next/router';
 import {createContext, FC, PropsWithChildren, useCallback, useState} from 'react';
 import {useAccount, useSigner} from 'wagmi';
@@ -7,7 +5,7 @@ import {useAccount, useSigner} from 'wagmi';
 import {GeneratorFormNFT} from '@/components/web3/Web3Generate';
 
 import {
-    addEmail,
+    addEmail, approveCustomImage,
     CardMetadata,
     confirmImage, createId,
     GenerateCardResponse,
@@ -15,7 +13,6 @@ import {
     getCardMetadata,
     updateName
 } from '@/api/common';
-import degenAbi from '@/constant/NFTABI.json';
 
 export enum EWeb3Flow {
     DEGEN,
@@ -39,9 +36,10 @@ export interface IWeb3Context {
     selectedTokenId?: string;
     selectTokenId: (id: string) => void;
     setStep: (step: EWeb3Flow) => void;
+    linkToNTF: (background: string, cardProvider: string, image: string, tokenId: string) => Promise<void>;
 }
 
-const degenAddress = '0xaC65D0033B7b484DcD782693B06f8636e5948e4C';
+const degenAddress = '0xF28fd0EA956eB8e9E1E8A2db9983363Ac59d59A5';
 
 export const Web3Context = createContext<IWeb3Context>(null as any);
 
@@ -59,7 +57,6 @@ export const Web3Provider: FC<PropsWithChildren<any>> = ({children}) => {
 
     const selectTokenId = useCallback((id: string) => {
         setSelectedTokenId(id);
-        console.log(id, 'id');
     }, []);
 
 
@@ -88,6 +85,7 @@ export const Web3Provider: FC<PropsWithChildren<any>> = ({children}) => {
 
     const createCard = useCallback(async (value: GeneratorFormNFT) => {
         try {
+            // @ts-ignore
             const {data} = await generateNFTCard(value.background, value.provider, value.image.url, +selectedTokenId || 0);
             setUserData(data);
             setMetadataId(data.owned_metadata);
@@ -124,7 +122,11 @@ export const Web3Provider: FC<PropsWithChildren<any>> = ({children}) => {
             console.log(e);
             setIsPendingTransaction(false)
         }
-    }, [address, data])
+    }, [address, data]);
+
+    const linkToNTF = useCallback(async (background: string, cardProvider: string, image: string, tokenId: string) => {
+       const data = await approveCustomImage(background, cardProvider, image, tokenId);
+    }, []);
 
     const submitEmail = useCallback(async (email: string, userId: string) => {
         await addEmail(email, userId);
@@ -143,6 +145,7 @@ export const Web3Provider: FC<PropsWithChildren<any>> = ({children}) => {
         isPendingTransaction,
         selectTokenId,
         selectedTokenId,
-        setStep
+        setStep,
+        linkToNTF
     }}>{children}</Web3Context.Provider>
 }

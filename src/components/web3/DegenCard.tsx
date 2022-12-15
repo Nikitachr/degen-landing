@@ -1,17 +1,17 @@
-import React, {useCallback, useContext, useState} from "react";
+import React, {useCallback, useContext, useEffect, useState} from "react";
 
 import {Button} from "@/components/Button";
+import {NFTItem} from "@/components/web3/NFTItem";
 
 import {AlchemyContext} from "@/context/Alchemy";
 import {EWeb3Flow, Web3Context} from "@/context/Web3Context";
-import {NFTItem} from "@/components/web3/NFTItem";
+import {useWeb3Modal} from "@web3modal/react";
+import {useAccount} from "wagmi";
 
 export const DegenCard = () => {
     const {selectTokenId, setStep} = useContext(Web3Context);
     const {degenCards, ownedNFTs} = useContext(AlchemyContext)
     const [selectedCard, setSelectedCard] = useState('')
-
-    console.log(selectedCard);
 
     const onSelect = useCallback(() => {
         selectTokenId(selectedCard);
@@ -33,9 +33,9 @@ export const DegenCard = () => {
                 ? <>
                     <h3 className="text-center">Looks like you don't have Degen card</h3>
                     <p className="text-center mt-4">You can buy it on Opensea</p>
-                    <div className="mx-auto w-40 mt-8">
-                        <a target="_blank" href="https://testnets.opensea.io/collection/degen-card-v3" rel="noreferrer">
-                            <Button>Buy</Button>
+                    <div className="mx-auto w-64 mt-8">
+                        <a target="_blank" href="https://testnets.opensea.io/collection/degen-7fyj7tetit" rel="noreferrer">
+                            <Button>Buy on Opensea</Button>
                         </a>
                     </div>
                 </>
