@@ -17,7 +17,7 @@ export interface IAlchemyContext {
 }
 
 const DEGEN_CARD_ADDRESS = '0xEa46f9f309AB081d2E45B0061c80bdcCdC9D2624';
-const registryAddress = '0x5ae1DA68Df290E42a3EFD52311F2Cf10f969fd35';
+const registryAddress = '0xE35Ad9c7255e413774BC45B416e3F6B4cABEA272';
 
 export const AlchemyContext = createContext<IAlchemyContext>(null as any)
 

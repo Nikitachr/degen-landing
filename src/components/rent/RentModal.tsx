@@ -1,8 +1,9 @@
-import {ChangeEvent, useCallback, useContext, useState} from "react";
-import {RentContext} from "@/context/Rent";
 import CloseIcon from  "public/svg/Close.svg";
+import {ChangeEvent, useCallback, useContext, useState} from "react";
+
+import {RentContext} from "@/context/Rent";
 export const RentModal = () => {
-    const { rentModal,  closeModal } = useContext(RentContext);
+    const { rentModal,  closeModal, rent } = useContext(RentContext);
     const [value, setValue] = useState(0);
 
     const onChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
@@ -29,6 +30,7 @@ export const RentModal = () => {
         </div>
 
         <p className="mt-8">Total: {(0.0001 * value).toFixed(4)}</p>
-        <button className="button-gradient w-full text-white rounded-xl mt-2 font-bold p-3">Rent</button>
+        <button onClick={() => rent(value)}
+            className="button-gradient w-full text-white rounded-xl mt-2 font-bold p-3">Rent</button>
     </div>
 }

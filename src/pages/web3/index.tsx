@@ -1,4 +1,6 @@
+import {useWeb3Modal} from "@web3modal/react";
 import React, {useContext, useEffect} from 'react';
+import {useAccount} from "wagmi";
 
 import Layout from '@/components/layout/Layout';
 import Seo from '@/components/Seo';
@@ -8,10 +10,7 @@ import {Web3Generate} from '@/components/web3/Web3Generate';
 import {Web3Name} from '@/components/web3/Web3Name';
 import {Web3Preview} from '@/components/web3/Web3Preview';
 
-import {AlchemyProvider} from '@/context/Alchemy';
 import {EWeb3Flow, Web3Context} from '@/context/Web3Context';
-import {useWeb3Modal} from "@web3modal/react";
-import {useAccount} from "wagmi";
 
 export default function Web3() {
     const {step} = useContext(Web3Context);
