@@ -34,13 +34,13 @@ const ethereumClient = new EthereumClient(wagmiClient, chains);
 function MyApp({Component, pageProps}: AppProps) {
     return <CommonContextProvider>
         <WagmiConfig client={wagmiClient}>
-            <Web3Provider>
-                <AlchemyProvider>
-                    <RentProvider>
+            <RentProvider>
+                <Web3Provider>
+                    <AlchemyProvider>
                         <Component {...pageProps} />
-                    </RentProvider>
-                </AlchemyProvider>
-            </Web3Provider>
+                    </AlchemyProvider>
+                </Web3Provider>
+            </RentProvider>
         </WagmiConfig>
         <Web3Modal
             projectId="f970d3d777e9f9f47d000653bd380034"

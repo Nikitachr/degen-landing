@@ -1,6 +1,7 @@
-import { Alchemy, Network, OwnedNft } from 'alchemy-sdk';
+import {Alchemy, Network, Nft, OwnedNft} from 'alchemy-sdk';
 import { createContext, FC, PropsWithChildren, useCallback, useEffect, useState } from 'react';
 import { useAccount } from 'wagmi';
+import {getUserRentings} from "@/api/grpah";
 
 const settings = {
     apiKey: 'BRg0XYVEFrprv1Yz3l7GG_F601YfaRvR',
@@ -14,6 +15,7 @@ export interface IAlchemyContext {
     degenCards: OwnedNft[];
     rentNFTs: OwnedNft[];
     isLoading: boolean;
+    fetchNFTMetadata: (address: string, tokenId: string) => Promise<Nft>;
 }
 
 const DEGEN_CARD_ADDRESS = '0xEa46f9f309AB081d2E45B0061c80bdcCdC9D2624';
@@ -27,7 +29,11 @@ export const AlchemyProvider: FC<PropsWithChildren<any>> = ({ children }) => {
     const [rentNFTs, setRentNFTs] = useState<OwnedNft[]>([]);
 
     const [isLoading, setIsLoading] = useState(true);
-    const { address } = useAccount()
+    const { address } = useAccount();
+
+    const fetchNFTMetadata = useCallback(async (address: string, tokenId: string) => {
+        return alchemy.nft.getNftMetadata(address, tokenId);
+    }, []);
 
     const fetchDegenCards = useCallback(async (account: string) => {
         setIsLoading(true);
@@ -38,12 +44,9 @@ export const AlchemyProvider: FC<PropsWithChildren<any>> = ({ children }) => {
 
     const fetchNFTs = useCallback(async (account: string) => {
         const nfts = await alchemy.nft.getNftsForOwner(account);
-        setOwnedNFTs(nfts.ownedNfts.filter(el => el.contract.address.toUpperCase() !== DEGEN_CARD_ADDRESS.toUpperCase()));
-    }, [])
-
-    const fetchRentNFTs = useCallback(async () => {
-        const nfts = await alchemy.nft.getNftsForOwner(registryAddress);
-        setRentNFTs(nfts.ownedNfts);
+        const rentedNFT = await getUserRentings(account);
+        const rentedNFTs = await Promise.all(rentedNFT.map(el => alchemy.nft.getNftMetadata(el.lending.nftAddress, el.lending.tokenID)))
+        setOwnedNFTs([...nfts.ownedNfts.filter(el => el.contract.address.toUpperCase() !== DEGEN_CARD_ADDRESS.toUpperCase()), ...rentedNFTs as OwnedNft[]]);
     }, [])
 
     useEffect(() => {
@@ -51,13 +54,13 @@ export const AlchemyProvider: FC<PropsWithChildren<any>> = ({ children }) => {
             fetchNFTs(address);
             fetchDegenCards(address);
         }
-        fetchRentNFTs();
     }, [address, fetchNFTs, fetchDegenCards])
 
     return <AlchemyContext.Provider value={{
         ownedNFTs,
         degenCards,
         rentNFTs,
-        isLoading
+        isLoading,
+        fetchNFTMetadata
     }}>{children}</AlchemyContext.Provider>
 }
