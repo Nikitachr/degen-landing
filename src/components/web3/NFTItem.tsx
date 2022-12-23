@@ -17,7 +17,10 @@ export const NFTItem: FC<{nft: OwnedNft, onClick: (s: string) => void, isDegen?:
     }, [fetchMetadata, nft.tokenUri])
 
     const image = useMemo(() => {
-        return metadata?.image?.replace("ipfs://", "https://ipfs.io/ipfs/");
+        if (nft?.media[0]?.gateway) {
+            return nft?.media[0]?.gateway
+        }
+        return metadata?.image?.replace("ipfs://", "https://ipfs.io/") || metadata?.image_url;
     }, [metadata]);
 
     return <div className="w-full h-full rounded grid gap-2" onClick={() => onClick(isDegen ? nft.tokenId : image || '')}>

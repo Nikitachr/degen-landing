@@ -16,11 +16,12 @@ export default function Web3() {
     const {step} = useContext(Web3Context);
     const {open} = useWeb3Modal();
     const {isConnected} = useAccount();
+
     useEffect(() => {
-        if (!isConnected) {
+        if (!isConnected && open) {
             open();
         }
-    }, [isConnected])
+    }, [isConnected, open])
 
     return (
         <Layout>
