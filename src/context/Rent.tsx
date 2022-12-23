@@ -57,7 +57,8 @@ export const RentProvider: FC<PropsWithChildren> = ({children}) => {
         const token = new ethers.Contract(wethAddress, TokenABI, signer.data)
         const tx = await token.approve(registryAddress, parseEther((0.0001 * duration).toFixed(4).toString()));
         await tx.wait();
-        await contract.rent([0], [rentModal.contract.address], [BigNumber.from(rentModal.tokenId)], [rentModal.id], [1], [1]);
+        const tx2 = await contract.rent([0], [rentModal.contract.address], [BigNumber.from(rentModal.tokenId)], [rentModal.id], [1], [1]);
+        await tx2.wait();
         fetchLendings();
     }, [signer, rentModal]);
 
@@ -71,7 +72,7 @@ export const RentProvider: FC<PropsWithChildren> = ({children}) => {
         const tx = await contract.stopRent([0], [nftAddress], [tokenId], [lendingId], [rentingId]);
         await tx.wait();
         fetchLendings();
-    }, [])
+    }, [signer])
 
     return <RentContext.Provider
         value={{rentModal, openModal, closeModal, rent, lendings, returnNFT}}>{children}</RentContext.Provider>

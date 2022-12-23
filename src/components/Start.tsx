@@ -1,12 +1,13 @@
-import React, { useCallback, useContext } from 'react'
-import Personal from 'public/svg/Personal.svg';
-import Nft from 'public/svg/Nft.svg'
-import { Button } from '@/components/Button';
-import { CommonContext, FormStep } from '@/context/Common';
-import { useUpdateEffect } from '@/hooks/render';
-import { useRouter } from 'next/router';
 import {useWeb3Modal} from "@web3modal/react";
+import { useRouter } from 'next/router';
+import Nft from 'public/svg/Nft.svg'
+import Personal from 'public/svg/Personal.svg';
+import React, { useCallback, useContext } from 'react'
 import {useAccount} from "wagmi";
+
+import { Button } from '@/components/Button';
+
+import { CommonContext, FormStep } from '@/context/Common';
 
 export const Start = () => {
     const { updateStep } = useContext(CommonContext);
@@ -37,7 +38,7 @@ export const Start = () => {
             <div className="grid gap-4 mt-12">
                 <Button type="submit" onClick={() => updateStep(FormStep.NftGenerator)}>Start</Button>
                 <span className="text-center">or</span>
-                <Button type="submit" onClick={connect}>Use own nfts</Button>
+                <Button type="submit" onClick={connect}>I Have one</Button>
             </div>
 
         </div>

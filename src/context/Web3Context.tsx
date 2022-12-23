@@ -44,7 +44,7 @@ const degenAddress = '0xF28fd0EA956eB8e9E1E8A2db9983363Ac59d59A5';
 export const Web3Context = createContext<IWeb3Context>(null as any);
 
 export const Web3Provider: FC<PropsWithChildren<any>> = ({children}) => {
-    const [step, setStep] = useState(EWeb3Flow.GENERATE);
+    const [step, setStep] = useState(EWeb3Flow.DEGEN);
     const [metadataId, setMetadataId] = useState<string>('');
     const [cardMetadata, setCardMetadata] = useState<CardMetadata>();
     const [selectedTokenId, setSelectedTokenId] = useState<string>();
